@@ -42,7 +42,6 @@ Or manually via GitHub:
 Once a release is published, the GitHub Action will automatically:
 
 1. **Update the version** in `fomod/Info.xml` to match the release tag.
-2. **Compress** the `data/` and `fomod/` directories into a ZIP archive named: `YourRepositoryName-vX.Y.Z.zip`
-
-3. **Upload** the ZIP file to the corresponding GitHub Release as a downloadable asset.
-4. **Append release notes** to `CHANGELOG.md`, maintaining a complete release history in **timeline format**.
+2. **Append release notes** to `CHANGELOG.md`, maintaining a complete release history in **timeline format**.
+3. **Compress** the `data/` and `fomod/` directories into a ZIP archive named: `YourRepositoryName-vX.Y.Z.zip`
+4. **Upload** the ZIP file to the corresponding GitHub Release as a downloadable asset.
