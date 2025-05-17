@@ -40,6 +40,47 @@ jobs:
             git push origin HEAD:${{ github.event.release.target_commitish }}
           fi
 
+      - name: Append changelog from release info
+        run: |
+          VERSION=${{ steps.version.outputs.version }}
+          RELEASE_TITLE="${{ github.event.release.name }}"
+          RELEASE_BODY="${{ github.event.release.body }}"
+          DATE=$(date +"%Y-%m-%d")
+
+          echo -e "\n## [$VERSION] - $DATE" >> temp_changelog.md
+
+          if [ -n "$RELEASE_BODY" ]; then
+            echo -e "\n$RELEASE_BODY\n" >> temp_changelog.md
+          fi
+
+          if [ -f CHANGELOG.md ]; then
+            awk '
+              /^## \[Unreleased\]/ {
+                print;
+                print "";
+                print "## [" VERSION "] - " DATE;
+                if (BODY != "") {
+                  print "";
+                  print BODY;
+                }
+                next
+              }
+              1' VERSION="$VERSION" DATE="$DATE" BODY="$RELEASE_BODY" CHANGELOG.md > CHANGELOG.tmp
+          else
+            cat temp_changelog.md > CHANGELOG.tmp
+          fi
+
+          mv CHANGELOG.tmp CHANGELOG.md
+          rm temp_changelog.md
+
+      - name: Commit updated changelog
+        run: |
+          git add CHANGELOG.md
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: update CHANGELOG.md for v${{ steps.version.outputs.version }}"
+            git push origin HEAD:${{ github.event.release.target_commitish }}
+          fi
+
       - name: List repository contents
         run: ls -R
 
